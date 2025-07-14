@@ -66,3 +66,28 @@ test('Negative - login with empty username and password', async ({ page }) => {
   // Verify error message
   await expect(page.locator('.error-message-container')).toContainText('Epic sadface: Username is required');
 });
+
+test('User can log in with valid credentials on SauceDemo', async ({ page }) => {
+  // Navigate to SauceDemo login page
+  await page.goto('https://www.saucedemo.com');
+
+  // Fill in login credentials
+  await page.fill('#user-name', 'standard_user');
+  await page.fill('#password', 'secret_sauce');
+
+  // Click the Login button
+  await page.click('#login-button');
+
+  // Assert the user is redirected to inventory page
+  await expect(page).toHaveURL(/.*inventory.html/);
+
+  // Assert product list is visible
+  await expect(page.locator('.inventory_list')).toBeVisible();
+});
+
+
+
+
+
+
+
