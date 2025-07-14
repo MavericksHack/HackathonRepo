@@ -55,8 +55,8 @@ steps:
 
   - task: PublishTestResults@2
     inputs:
-      testResultsFiles: 'test-results-$(Build.BuildNumber)/*.xml'
-      testResultsFormat: 'JUnit'
+      testResultsFiles: '.last-run.json'
+      testResultsFormat: 'json'
       failTaskOnFailedTests: true
     displayName: 'Publish Playwright Test Results'
 
