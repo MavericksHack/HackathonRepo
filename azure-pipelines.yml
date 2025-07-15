@@ -3,13 +3,8 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-#trigger:
-#- main
-on:
-  push:
-    branches: [ main ]
-  pull_request:
-    branches: [ main ]
+trigger:
+- main
     
 pool:
   vmImage: 'windows-latest'
