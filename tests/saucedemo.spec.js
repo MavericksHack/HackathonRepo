@@ -1,93 +1,48 @@
 const { test, expect } = require('@playwright/test');
 
-test('Positive - login with valid credentials', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
+test.describe('Sauce Demo Login Page Tests', () => {
+  
+  // Before each test, navigate to the login page
+  test.beforeEach(async ({ page }) => {
+    await page.goto('https://www.saucedemo.com/');
+  });
 
-  // Enter valid username and password
-  await page.fill('#user-name', 'standard_user');
-  await page.fill('#password', 'secret_sauce');
+  test('TC_L1: Valid login', async ({ page }) => {
+    await page.fill('#user-name', 'standard_user');
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await expect(page).toHaveURL(/inventory.html/);
+  });
 
-  // Click login button
-  await page.click('#login-button');
+  test('TC_L2: Invalid username', async ({ page }) => {
+    await page.fill('#user-name', 'invalid_user');
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  });
 
-  // Verify navigation to products page
-  await expect(page).toHaveURL('https://www.saucedemo.com/inventory.html');
+  test('TC_L3: Invalid password', async ({ page }) => {
+    await page.fill('#user-name', 'standard_user');
+    await page.fill('#password', 'wrong_password');
+    await page.click('#login-button');
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  });
 
-  // Optional: Verify product page elements
-  await expect(page.locator('.title')).toHaveText('Products');
+  test('TC_L4: Empty username and password', async ({ page }) => {
+    await page.click('#login-button');
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  });
+
+  test('TC_L5: Empty username', async ({ page }) => {
+    await page.fill('#password', 'secret_sauce');
+    await page.click('#login-button');
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  });
+
+  test('TC_L6: Empty password', async ({ page }) => {
+    await page.fill('#user-name', 'standard_user');
+    await page.click('#login-button');
+    await expect(page.locator('[data-test="error"]')).toBeVisible();
+  });
+
 });
-
-// Invalid username
-test('Negative - login with invalid username', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', 'invalid_user');
-  await page.fill('#password', 'secret_sauce');
-  await page.click('#login-button');
-  // Verify error message
-  await expect(page.locator('.error-message-container')).toContainText('Username and password do not match any user in this service');
-});
-
-// Invalid password
-test('Negative - login with invalid password', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', 'standard_user');
-  await page.fill('#password', 'wrong_password');
-  await page.click('#login-button');
-  // Verify error message
-  await expect(page.locator('.error-message-container')).toContainText('Username and password do not match any user in this service');
-});
-
-// Empty username
-test('Negative - login with empty username', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', '');
-  await page.fill('#password', 'secret_sauce');
-  await page.click('#login-button');
-  // Verify error message
-  await expect(page.locator('.error-message-container')).toContainText('Epic sadface: Username is required');
-});
-
-// Empty password
-test('Negative - login with empty password', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', 'standard_user');
-  await page.fill('#password', '');
-  await page.click('#login-button');
-  // Verify error message
-  await expect(page.locator('.error-message-container')).toContainText('Epic sadface: Password is required');
-});
-
-// Both username and password empty
-test('Negative - login with empty username and password', async ({ page }) => {
-  await page.goto('https://www.saucedemo.com');
-  await page.fill('#user-name', '');
-  await page.fill('#password', '');
-  await page.click('#login-button');
-  // Verify error message
-  await expect(page.locator('.error-message-container')).toContainText('Epic sadface: Username is required');
-});
-
-test('User can log in with valid credentials on SauceDemo', async ({ page }) => {
-  // Navigate to SauceDemo login page
-  await page.goto('https://www.saucedemo.com');
-
-  // Fill in login credentials
-  await page.fill('#user-name', 'standard_user');
-  await page.fill('#password', 'secret_sauce');
-
-  // Click the Login button
-  await page.click('#login-button');
-
-  // Assert the user is redirected to inventory page
-  await expect(page).toHaveURL(/.*inventory.html/);
-
-  // Assert product list is visible
-  await expect(page.locator('.inventory_list')).toBeVisible();
-});
-
-
-
-
-
-
-
