@@ -3,9 +3,12 @@
 # Add steps that build, run tests, deploy, and more:
 # https://aka.ms/yaml
 
-trigger:
-- main
 
+trigger:
+  branches:
+    include:
+      - main
+    
 pool:
   vmImage: 'windows-latest'
 
@@ -20,35 +23,13 @@ steps:
       npm -v
     displayName: 'Show Node.js and npm versions'
   
- # - script: |
-  #    npm cache clean --force
-   # displayName: 'Clean npm cache'
-
-#  - script: |
- #     rd /s /q node_modules
-  #  del package-lock.json
-   # displayName: 'Remove node_modules and package-lock.json'
-    #condition: eq( variables['Agent.OS'], 'Windows_NT' )
-
   - script: npm ci --install-strategy hoisted
     displayName: 'Install dependencies'
 
- # - script: npm install -g npm@latest
-  #  displayName: 'Update npm to latest version'
-
-  #- script: npx playwright install --with-deps
-   # displayName: 'Install Playwright browsers'
-    #npm install -g playwright
-    #npm init playwright@latest
   - script: |      
       npx playwright install --with-deps
     displayName: 'Install Playwright'
     
-
-#tests/saucedemologin.spec.js --reporter=junit --output=test-results
-  #- script: |
-   #   npx playwright test tests/saucedemologin.spec.js --reporter=junit --output=test-results
-    #displayName: 'Run Playwright tests and save JUnit report with build number and datetime'
   - script : |
       npx playwright test --output=test-results
     displayName: 'Run Playwright tests'
