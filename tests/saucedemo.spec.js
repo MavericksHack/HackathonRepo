@@ -1,12 +1,12 @@
-// sauce-demo.spec.js
+// sauce-login.spec.js
 const { test, expect } = require('@playwright/test');
 
 const loginUrl = 'https://www.saucedemo.com/';
 
 test.describe('Sauce Demo Login Page Tests', () => {
-  
-  // POSITIVE TEST CASES
-  test('Valid login with correct credentials', async ({ page }) => {
+
+  // Positive Test: Valid login
+  test('Login with valid credentials', async ({ page }) => {
     await page.goto(loginUrl);
     await page.fill('#user-name', 'standard_user');
     await page.fill('#password', 'secret_sauce');
@@ -14,7 +14,8 @@ test.describe('Sauce Demo Login Page Tests', () => {
     await expect(page).toHaveURL(/inventory.html/);
   });
 
-  test('Verify username and password fields are visible and enabled', async ({ page }) => {
+  // Verify input fields visibility and enabled
+  test('Username and Password fields are visible and enabled', async ({ page }) => {
     await page.goto(loginUrl);
     await expect(page.locator('#user-name')).toBeVisible();
     await expect(page.locator('#user-name')).toBeEnabled();
@@ -22,8 +23,8 @@ test.describe('Sauce Demo Login Page Tests', () => {
     await expect(page.locator('#password')).toBeEnabled();
   });
 
-  // NEGATIVE TEST CASES
-  test('Invalid username with valid password shows error', async ({ page }) => {
+  // Negative Test: Invalid username
+  test('Invalid username shows error', async ({ page }) => {
     await page.goto(loginUrl);
     await page.fill('#user-name', 'invalid_user');
     await page.fill('#password', 'secret_sauce');
@@ -31,7 +32,8 @@ test.describe('Sauce Demo Login Page Tests', () => {
     await expect(page.locator('[data-test="error"]')).toContainText('Username and password do not match');
   });
 
-  test('Valid username with invalid password shows error', async ({ page }) => {
+  // Negative Test: Invalid password
+  test('Invalid password shows error', async ({ page }) => {
     await page.goto(loginUrl);
     await page.fill('#user-name', 'standard_user');
     await page.fill('#password', 'wrong_password');
@@ -39,31 +41,34 @@ test.describe('Sauce Demo Login Page Tests', () => {
     await expect(page.locator('[data-test="error"]')).toContainText('Username and password do not match');
   });
 
-  test('Both username and password invalid shows error', async ({ page }) => {
+  // Negative Test: Both invalid
+  test('Invalid username and password shows error', async ({ page }) => {
     await page.goto(loginUrl);
-    await page.fill('#user-name', 'invalid_user');
-    await page.fill('#password', 'wrong_password');
+    await page.fill('#user-name', 'bad_user');
+    await page.fill('#password', 'bad_password');
     await page.click('#login-button');
     await expect(page.locator('[data-test="error"]')).toContainText('Username and password do not match');
   });
 
-  test('Empty username and password fields show validation error', async ({ page }) => {
+  // Negative Test: Blank inputs
+  test('Blank username and password shows error', async ({ page }) => {
     await page.goto(loginUrl);
     await page.click('#login-button');
-    // Assume error is shown in locator '[data-test="error"]'
     await expect(page.locator('[data-test="error"]')).toContainText('Username is required');
   });
 
-  test('Attempt login with script tags or SQL injection strings', async ({ page }) => {
+  // Security test: Script injection attempt
+  test('Script injection attempt handled securely', async ({ page }) => {
     await page.goto(loginUrl);
     await page.fill('#user-name', "<script>alert(1)</script>");
     await page.fill('#password', "<script>alert(1)</script>");
     await page.click('#login-button');
-    // Expect error or safe handling
+    // Expect no pop-up and error message or safe handling
     await expect(page.locator('[data-test="error"]')).toBeVisible();
   });
 
-  test('Login with special characters', async ({ page }) => {
+  // Special characters test
+  test('Special characters in inputs', async ({ page }) => {
     await page.goto(loginUrl);
     await page.fill('#user-name', '!@#$%^&*()');
     await page.fill('#password', '!@#$%^&*()');
